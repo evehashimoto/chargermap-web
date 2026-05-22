@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>ChargerMap Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+  <header class="navbar">
+
+    <div class="logo-area">
+      <img src="assets/logo.png" alt="logo">
+    </div>
+
+    <nav>
+      <a href="#">Painel Administrativo</a>
+      <a href="#">Usuários</a>
+      <a href="#">Relatórios</a>
+    </nav>
+
+    <button class="profile-btn">
+      <i data-lucide="user"></i>
+      Meu Perfil
+    </button>
+
+  </header>
+
+  <main class="container">
+
+    <section class="title-section">
+      <h1>Painel Administrativo</h1>
+      <p>Gerencie os postos de recarga e suas avaliações.</p>
+    </section>
+
+    <section class="cards">
+
+      <div class="card">
+        <h3>Total de Postos</h3>
+        <h2>1.234</h2>
+        <p><strong>+ 6,9%</strong> que o mês anterior</p>
+      </div>
+
+      <div class="card">
+        <h3>Usuários Ativos</h3>
+        <h2>12.345</h2>
+        <p><strong>+ 6,9%</strong> que o mês anterior</p>
+      </div>
+
+      <div class="card card-icon">
+
+        <div>
+          <h3>Avaliações</h3>
+          <h2>2.345</h2>
+          <p><strong>+ 6,9%</strong> que o mês anterior</p>
+        </div>
+
+        <a href="avaliacoes.html" class="icon-box">
+          <img src="assets/eye.png" alt="visualizar">
+        </a>
+
+      </div>
+
+    </section>
+
+    <div class="table-header">
+
+      <h2>Postos Cadastrados</h2>
+
+      <button class="add-btn" onclick="openModal()">
+        + Adicionar Posto
+      </button>
+
+    </div>
+
+    <section class="table-section">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Nome do Posto</th>
+            <th>Cidade</th>
+            <th>Tipo de Conector</th>
+            <th>Potência</th>
+            <th>Disponibilidade</th>
+            <th>Avaliações</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr>
+            <td>Estação de Recarga - Nações Unidas</td>
+            <td>Osasco</td>
+            <td>CCS</td>
+            <td>140kw</td>
+            <td>2 Pontos</td>
+            <td>4,3 ⭐</td>
+
+            <td>
+              <button class="edit-btn">
+                Editar
+              </button>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Estação de Recarga - Nações Unidas</td>
+            <td>Osasco</td>
+            <td>CCS</td>
+            <td>140kw</td>
+            <td>2 Pontos</td>
+            <td>4,3 ⭐</td>
+
+            <td>
+              <button class="edit-btn">
+                Editar
+              </button>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Estação de Recarga - Nações Unidas</td>
+            <td>Osasco</td>
+            <td>CCS</td>
+            <td>140kw</td>
+            <td>2 Pontos</td>
+            <td>4,3 ⭐</td>
+
+            <td>
+              <button class="edit-btn">
+                Editar
+              </button>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Estação de Recarga - Nações Unidas</td>
+            <td>Osasco</td>
+            <td>CCS</td>
+            <td>140kw</td>
+            <td>2 Pontos</td>
+            <td>4,3 ⭐</td>
+
+            <td>
+              <button class="edit-btn">
+                Editar
+              </button>
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </section>
+
+  </main>
+
+  <div class="modal" id="modal">
+
+    <div class="modal-content">
+
+      <h2>Novo Posto</h2>
+
+      <input type="text" placeholder="Nome do posto">
+      <input type="text" placeholder="Cidade">
+      <input type="text" placeholder="Tipo de conector">
+      <input type="text" placeholder="Potência">
+
+      <div class="modal-buttons">
+
+        <button class="cancel-btn" onclick="closeModal()">
+          Cancelar
+        </button>
+
+        <button class="save-btn" onclick="closeModal()">
+          Salvar
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+
+    lucide.createIcons();
+
+    function openModal(){
+      document.getElementById("modal").style.display = "flex";
+    }
+
+    function closeModal(){
+      document.getElementById("modal").style.display = "none";
+    }
+
+  </script>
+
+</body>
+</html>
