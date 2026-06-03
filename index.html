@@ -48,8 +48,8 @@
 
       <div class="card">
         <h3>Total de Postos</h3>
-        <h2>1.234</h2>
-        <p><strong>+ 6,9%</strong> que o mês anterior</p>
+        <h2 id="total-postos">0</h2>
+        <p>Postos cadastrados na plataforma</p>
       </div>
 
       <div class="card">
@@ -100,65 +100,11 @@
           </tr>
         </thead>
 
-        <tbody>
+        <tbody id="tabela-postos">
 
           <tr>
-            <td>Estação de Recarga - Nações Unidas</td>
-            <td>Osasco</td>
-            <td>CCS</td>
-            <td>140kw</td>
-            <td>2 Pontos</td>
-            <td>4,3 ⭐</td>
-
-            <td>
-              <button class="edit-btn">
-                Editar
-              </button>
-            </td>
-          </tr>
-
-          <tr>
-            <td>Estação de Recarga - Nações Unidas</td>
-            <td>Osasco</td>
-            <td>CCS</td>
-            <td>140kw</td>
-            <td>2 Pontos</td>
-            <td>4,3 ⭐</td>
-
-            <td>
-              <button class="edit-btn">
-                Editar
-              </button>
-            </td>
-          </tr>
-
-          <tr>
-            <td>Estação de Recarga - Nações Unidas</td>
-            <td>Osasco</td>
-            <td>CCS</td>
-            <td>140kw</td>
-            <td>2 Pontos</td>
-            <td>4,3 ⭐</td>
-
-            <td>
-              <button class="edit-btn">
-                Editar
-              </button>
-            </td>
-          </tr>
-
-          <tr>
-            <td>Estação de Recarga - Nações Unidas</td>
-            <td>Osasco</td>
-            <td>CCS</td>
-            <td>140kw</td>
-            <td>2 Pontos</td>
-            <td>4,3 ⭐</td>
-
-            <td>
-              <button class="edit-btn">
-                Editar
-              </button>
+            <td colspan="7">
+              Carregando postos...
             </td>
           </tr>
 
@@ -176,18 +122,18 @@
 
       <h2>Novo Posto</h2>
 
-      <input type="text" placeholder="Nome do posto">
-      <input type="text" placeholder="Cidade">
-      <input type="text" placeholder="Tipo de conector">
-      <input type="text" placeholder="Potência">
+      <input id="nome" type="text" placeholder="Nome do posto">
+      <input id="cidade" type="text" placeholder="Cidade">
+      <input id="conector" type="text" placeholder="Tipo de conector">
+      <input id="potencia" type="text" placeholder="Potência">
 
-      <div class="modal-buttons">
+    <div class="modal-buttons">
 
         <button class="cancel-btn" onclick="closeModal()">
           Cancelar
         </button>
 
-        <button class="save-btn" onclick="closeModal()">
+        <button class="save-btn" onclick="salvarPosto()">
           Salvar
         </button>
 
@@ -199,17 +145,254 @@
 
   <script>
 
-    lucide.createIcons();
+  lucide.createIcons();
 
-    function openModal(){
-      document.getElementById("modal").style.display = "flex";
+  let postoEditando = null;
+
+  function openModal() {
+    document.getElementById("modal").style.display = "flex";
+  }
+
+  function closeModal() {
+    document.getElementById("modal").style.display = "none";
+  }
+
+  async function carregarPostos() {
+
+    try {
+
+      const response = await fetch(
+        "https://chargermap-backend.onrender.com/postos"
+      );
+
+      const postos = await response.json();
+
+      const tabela = document.getElementById("tabela-postos");
+
+      tabela.innerHTML = "";
+
+      document.getElementById("total-postos").innerText =
+        postos.length;
+
+      postos.forEach((posto) => {
+
+        tabela.innerHTML += `
+          <tr>
+            <td>${posto.nome}</td>
+            <td>${posto.cidade}</td>
+            <td>${posto.conector}</td>
+            <td>${posto.potencia}</td>
+            <td>${posto.disponibilidade}</td>
+            <td>${posto.avaliacao} ⭐</td>
+
+            <td>
+
+              <button
+                class="edit-btn"
+                onclick="editarPosto(
+                  '${posto._id}',
+                  '${posto.nome}',
+                  '${posto.cidade}',
+                  '${posto.conector}',
+                  '${posto.potencia}'
+                )"
+              >
+                Editar
+              </button>
+
+              <button
+                class="edit-btn"
+                style="background:#dc3545; margin-left:8px;"
+                onclick="deletarPosto('${posto._id}')"
+              >
+                Excluir
+              </button>
+
+            </td>
+
+          </tr>
+        `;
+
+      });
+
+    } catch (error) {
+
+      console.error(error);
+
+      document.getElementById("tabela-postos").innerHTML = `
+        <tr>
+          <td colspan="7">
+            Erro ao carregar os postos.
+          </td>
+        </tr>
+      `;
+
     }
 
-    function closeModal(){
-      document.getElementById("modal").style.display = "none";
+  }
+
+  async function criarPosto() {
+
+    const nome = document.getElementById("nome").value;
+    const cidade = document.getElementById("cidade").value;
+    const conector = document.getElementById("conector").value;
+    const potencia = document.getElementById("potencia").value;
+
+    try {
+
+      await fetch(
+        "https://chargermap-backend.onrender.com/postos",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            nome,
+            cidade,
+            conector,
+            potencia,
+            disponibilidade: "2 pontos",
+            avaliacao: 4.5,
+            endereco: "Endereço não informado",
+            latitude: 0,
+            longitude: 0,
+            imagem: ""
+          })
+        }
+      );
+
+      limparFormulario();
+
+      closeModal();
+
+      carregarPostos();
+
+    } catch (error) {
+
+      console.error(error);
+
     }
 
-  </script>
+  }
+
+  async function atualizarPosto() {
+
+    const nome = document.getElementById("nome").value;
+    const cidade = document.getElementById("cidade").value;
+    const conector = document.getElementById("conector").value;
+    const potencia = document.getElementById("potencia").value;
+
+    try {
+
+      await fetch(
+        `https://chargermap-backend.onrender.com/postos/${postoEditando}`,
+        {
+          method: "PUT",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            nome,
+            cidade,
+            conector,
+            potencia
+          })
+        }
+      );
+
+      postoEditando = null;
+
+      limparFormulario();
+
+      closeModal();
+
+      carregarPostos();
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+  }
+
+  async function salvarPosto() {
+
+    if (postoEditando) {
+
+      await atualizarPosto();
+
+    } else {
+
+      await criarPosto();
+
+    }
+
+  }
+
+  function editarPosto(
+    id,
+    nome,
+    cidade,
+    conector,
+    potencia
+  ) {
+
+    postoEditando = id;
+
+    document.getElementById("nome").value = nome;
+    document.getElementById("cidade").value = cidade;
+    document.getElementById("conector").value = conector;
+    document.getElementById("potencia").value = potencia;
+
+    openModal();
+
+  }
+
+  async function deletarPosto(id) {
+
+    const confirmar = confirm(
+      "Deseja realmente excluir este posto?"
+    );
+
+    if (!confirmar) return;
+
+    try {
+
+      await fetch(
+        `https://chargermap-backend.onrender.com/postos/${id}`,
+        {
+          method: "DELETE"
+        }
+      );
+
+      carregarPostos();
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+  }
+
+  function limparFormulario() {
+
+    document.getElementById("nome").value = "";
+    document.getElementById("cidade").value = "";
+    document.getElementById("conector").value = "";
+    document.getElementById("potencia").value = "";
+
+  }
+
+  carregarPostos();
+
+</script>
 
 </body>
 </html>
