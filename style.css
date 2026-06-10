@@ -298,6 +298,14 @@ tbody tr{
     padding:20px;
   }
 
+  @media(max-width:900px){
+
+  .graficos-container{
+    flex-direction:column;
+  }
+
+}
+
   nav{
     gap:20px;
     flex-wrap:wrap;
@@ -327,4 +335,62 @@ tbody tr{
     width:90%;
   }
 
+}
+
+.status-disponivel{
+  background:#D4F8D4;
+  color:#2E7D32;
+  padding:8px 12px;
+  border-radius:8px;
+  font-weight:600;
+}
+
+.status-uso{
+  background:#FFF3CD;
+  color:#856404;
+  padding:8px 12px;
+  border-radius:8px;
+  font-weight:600;
+}
+
+.status-indisponivel{
+  background:#F8D7DA;
+  color:#721C24;
+  padding:8px 12px;
+  border-radius:8px;
+  font-weight:600;
+}
+
+.status-select{
+  border:none;
+  padding:8px;
+  border-radius:8px;
+  background:#F5F5F7;
+  font-family:'Poppins', sans-serif;
+}
+
+.relatorio-card h2{
+  color:#555799;
+}
+
+.status-select{
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid #ddd;
+  font-family:'Poppins', sans-serif;
+  cursor:pointer;
+}
+
+.graficos-container {
+  display: flex;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.grafico-card {
+  flex: 1;
+}
+
+.grafico-card canvas {
+  max-height: 320px;
 }

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Relatórios - ChargerMap</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+
+<body>
+
+<header class="navbar">
+
+<div class="logo-area">
+<img src="assets/logo.png" alt="logo">
+</div>
+
+<nav>
+<a href="index.html">Painel Administrativo</a>
+<a href="relatorios.html">Relatórios</a>
+</nav>
+
+<button class="profile-btn" onclick="logout()">
+  <i data-lucide="log-out"></i>
+  Sair
+</button>
+
+</header>
+
+<main class="container">
+
+<section class="title-section">
+<h1>Relatórios</h1>
+<p>Indicadores de desempenho da rede ChargerMap.</p>
+</section>
+
+<section class="cards">
+
+<div class="card">
+<h3>Total de Postos</h3>
+<h2 id="totalPostos">0</h2>
+<p>Postos cadastrados</p>
+</div>
+
+<div class="card">
+<h3>Média de Avaliação</h3>
+<h2 id="mediaAvaliacoes">0</h2>
+<p>Satisfação dos usuários</p>
+</div>
+
+<div class="card">
+<h3>Disponibilidade</h3>
+<h2 id="postosDisponiveis">0</h2>
+<p>Postos disponíveis</p>
+</div>
+
+</section>
+
+<div class="graficos-container">
+
+  <section class="table-section grafico-card">
+
+    <h2 style="margin-bottom:20px;color:#555799;">
+      Disponibilidade dos Postos
+    </h2>
+
+    <canvas id="graficoDisponibilidade"></canvas>
+
+  </section>
+
+  <section class="table-section grafico-card">
+
+    <h2 style="margin-bottom:20px;color:#555799;">
+      Avaliações dos Postos
+    </h2>
+
+    <canvas id="graficoAvaliacoes"></canvas>
+
+  </section>
+
+</div>
+
+</main>
+
+<script>
+
+lucide.createIcons();
+
+async function carregarRelatorios() {
+
+try {
+
+const response = await fetch(
+"https://chargermap-backend.onrender.com/postos"
+);
+
+const postos = await response.json();
+
+document.getElementById("totalPostos").innerText =
+postos.length;
+
+let somaAvaliacoes = 0;
+
+let disponiveis = 0;
+let emUso = 0;
+let indisponiveis = 0;
+
+const nomes = [];
+const avaliacoes = [];
+
+postos.forEach((posto) => {
+
+somaAvaliacoes += posto.avaliacao || 0;
+
+nomes.push(posto.nome);
+avaliacoes.push(posto.avaliacao || 0);
+
+if (posto.disponibilidade === "Disponível") {
+disponiveis++;
+}
+
+if (posto.disponibilidade === "Em uso") {
+emUso++;
+}
+
+if (posto.disponibilidade === "Indisponível") {
+indisponiveis++;
+}
+
+});
+
+const media =
+(somaAvaliacoes / postos.length).toFixed(1);
+
+document.getElementById("mediaAvaliacoes").innerText =
+media + " ⭐";
+
+document.getElementById("postosDisponiveis").innerText =
+disponiveis;
+
+new Chart(
+document.getElementById("graficoDisponibilidade"),
+{
+type: "doughnut",
+
+data: {
+labels: [
+"Disponíveis",
+"Em Uso",
+"Indisponíveis"
+],
+
+datasets: [{
+data: [
+disponiveis,
+emUso,
+indisponiveis
+]
+}]
+}
+}
+);
+
+new Chart(
+document.getElementById("graficoAvaliacoes"),
+{
+type: "bar",
+
+data: {
+labels: nomes,
+
+datasets: [{
+label: "Avaliação",
+
+data: avaliacoes
+}]
+}
+}
+);
+
+} catch(error) {
+
+console.error(error);
+
+}
+
+}
+
+carregarRelatorios();
+
+</script>
+
+</body>
+</html>

@@ -3,16 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
   <title>ChargerMap Dashboard</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="style.css">
-
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
@@ -26,14 +21,13 @@
 
     <nav>
       <a href="#">Painel Administrativo</a>
-      <a href="#">Usuários</a>
-      <a href="#">Relatórios</a>
+      <a href="relatorios.html">Relatórios</a>
     </nav>
 
-    <button class="profile-btn">
-      <i data-lucide="user"></i>
-      Meu Perfil
-    </button>
+    <button class="profile-btn" onclick="logout()">
+  <i data-lucide="log-out"></i>
+  Sair
+</button>
 
   </header>
 
@@ -59,7 +53,6 @@
       </div>
 
       <div class="card card-icon">
-
         <div>
           <h3>Avaliações</h3>
           <h2>2.345</h2>
@@ -69,25 +62,39 @@
         <a href="avaliacoes.html" class="icon-box">
           <img src="assets/eye.png" alt="visualizar">
         </a>
-
       </div>
-
     </section>
 
+    <section class="cards">
+
+  <div class="card relatorio-card">
+    <h3>Disponíveis</h3>
+    <h2 id="postos-disponiveis">0</h2>
+    <p>Prontos para uso</p>
+  </div>
+
+  <div class="card relatorio-card">
+    <h3>Em Uso</h3>
+    <h2 id="postos-uso">0</h2>
+    <p>Carregando veículos</p>
+  </div>
+
+  <div class="card relatorio-card">
+    <h3>Indisponíveis</h3>
+    <h2 id="postos-indisponiveis">0</h2>
+    <p>Em manutenção</p>
+  </div>
+</section>
+
     <div class="table-header">
-
       <h2>Postos Cadastrados</h2>
-
       <button class="add-btn" onclick="openModal()">
         + Adicionar Posto
       </button>
-
     </div>
 
     <section class="table-section">
-
       <table>
-
         <thead>
           <tr>
             <th>Nome do Posto</th>
@@ -101,54 +108,44 @@
         </thead>
 
         <tbody id="tabela-postos">
-
           <tr>
             <td colspan="7">
               Carregando postos...
             </td>
           </tr>
-
         </tbody>
-
       </table>
-
     </section>
 
   </main>
 
   <div class="modal" id="modal">
-
     <div class="modal-content">
-
       <h2>Novo Posto</h2>
-
       <input id="nome" type="text" placeholder="Nome do posto">
       <input id="cidade" type="text" placeholder="Cidade">
       <input id="conector" type="text" placeholder="Tipo de conector">
       <input id="potencia" type="text" placeholder="Potência">
 
     <div class="modal-buttons">
-
         <button class="cancel-btn" onclick="closeModal()">
           Cancelar
         </button>
-
         <button class="save-btn" onclick="salvarPosto()">
           Salvar
         </button>
-
       </div>
-
     </div>
-
   </div>
 
   <script>
+    if(localStorage.getItem("auth") !== "true"){
+  window.location.href =
+    "login.html";
+}
 
   lucide.createIcons();
-
   let postoEditando = null;
-
   function openModal() {
     document.getElementById("modal").style.display = "flex";
   }
@@ -159,238 +156,324 @@
 
   async function carregarPostos() {
 
-    try {
+  try {
 
-      const response = await fetch(
-        "https://chargermap-backend.onrender.com/postos"
-      );
+    const response = await fetch(
+      "https://chargermap-backend.onrender.com/postos"
+    );
 
-      const postos = await response.json();
+    const postos = await response.json();
 
-      const tabela = document.getElementById("tabela-postos");
+    const tabela = document.getElementById("tabela-postos");
 
-      tabela.innerHTML = "";
+    let disponiveis = 0;
+    let emUso = 0;
+    let indisponiveis = 0;
 
-      document.getElementById("total-postos").innerText =
-        postos.length;
+    tabela.innerHTML = "";
 
-      postos.forEach((posto) => {
+    document.getElementById("total-postos").innerText =
+      postos.length;
 
-        tabela.innerHTML += `
-          <tr>
-            <td>${posto.nome}</td>
-            <td>${posto.cidade}</td>
-            <td>${posto.conector}</td>
-            <td>${posto.potencia}</td>
-            <td>${posto.disponibilidade}</td>
-            <td>${posto.avaliacao} ⭐</td>
+    postos.forEach((posto) => {
 
-            <td>
+      if (posto.disponibilidade === "Disponível") {
+        disponiveis++;
+      }
 
-              <button
-                class="edit-btn"
-                onclick="editarPosto(
-                  '${posto._id}',
-                  '${posto.nome}',
-                  '${posto.cidade}',
-                  '${posto.conector}',
-                  '${posto.potencia}'
-                )"
-              >
-                Editar
-              </button>
+      if (posto.disponibilidade === "Em uso") {
+        emUso++;
+      }
 
-              <button
-                class="edit-btn"
-                style="background:#dc3545; margin-left:8px;"
-                onclick="deletarPosto('${posto._id}')"
-              >
-                Excluir
-              </button>
+      if (posto.disponibilidade === "Indisponível") {
+        indisponiveis++;
+      }
 
-            </td>
-
-          </tr>
-        `;
-
-      });
-
-    } catch (error) {
-
-      console.error(error);
-
-      document.getElementById("tabela-postos").innerHTML = `
+      tabela.innerHTML += `
         <tr>
-          <td colspan="7">
-            Erro ao carregar os postos.
+          <td>${posto.nome}</td>
+          <td>${posto.cidade}</td>
+          <td>${posto.conector}</td>
+          <td>${posto.potencia}</td>
+
+          <td>
+            <select
+              class="status-select"
+              onchange="alterarDisponibilidade('${posto._id}', this.value)"
+            >
+
+              <option
+                value="Disponível"
+                ${posto.disponibilidade === "Disponível" ? "selected" : ""}
+              >
+                Disponível
+              </option>
+
+              <option
+                value="Em uso"
+                ${posto.disponibilidade === "Em uso" ? "selected" : ""}
+              >
+                Em uso
+              </option>
+
+              <option
+                value="Indisponível"
+                ${posto.disponibilidade === "Indisponível" ? "selected" : ""}
+              >
+                Indisponível
+              </option>
+
+            </select>
+          </td>
+
+          <td>${posto.avaliacao} ⭐</td>
+
+          <td>
+
+            <button
+              class="edit-btn"
+              onclick="editarPosto(
+                '${posto._id}',
+                '${posto.nome}',
+                '${posto.cidade}',
+                '${posto.conector}',
+                '${posto.potencia}'
+              )"
+            >
+              Editar
+            </button>
+
+            <button
+              class="edit-btn"
+              style="background:#dc3545; margin-left:8px;"
+              onclick="deletarPosto('${posto._id}')"
+            >
+              Excluir
+            </button>
+
           </td>
         </tr>
       `;
 
-    }
+    });
+
+    document.getElementById("postos-disponiveis").innerText =
+      disponiveis;
+
+    document.getElementById("postos-uso").innerText =
+      emUso;
+
+    document.getElementById("postos-indisponiveis").innerText =
+      indisponiveis;
+
+  } catch (error) {
+
+    console.error(error);
+
+    document.getElementById("tabela-postos").innerHTML = `
+      <tr>
+        <td colspan="7">
+          Erro ao carregar os postos.
+        </td>
+      </tr>
+    `;
 
   }
 
-  async function criarPosto() {
+}
 
-    const nome = document.getElementById("nome").value;
-    const cidade = document.getElementById("cidade").value;
-    const conector = document.getElementById("conector").value;
-    const potencia = document.getElementById("potencia").value;
+async function alterarDisponibilidade(
+  id,
+  disponibilidade
+) {
 
-    try {
+  try {
 
-      await fetch(
-        "https://chargermap-backend.onrender.com/postos",
-        {
-          method: "POST",
+    await fetch(
+      `https://chargermap-backend.onrender.com/postos/${id}`,
+      {
+        method: "PUT",
 
-          headers: {
-            "Content-Type": "application/json"
-          },
+        headers: {
+          "Content-Type": "application/json"
+        },
 
-          body: JSON.stringify({
-            nome,
-            cidade,
-            conector,
-            potencia,
-            disponibilidade: "2 pontos",
-            avaliacao: 4.5,
-            endereco: "Endereço não informado",
-            latitude: 0,
-            longitude: 0,
-            imagem: ""
-          })
-        }
-      );
-
-      limparFormulario();
-
-      closeModal();
-
-      carregarPostos();
-
-    } catch (error) {
-
-      console.error(error);
-
-    }
-
-  }
-
-  async function atualizarPosto() {
-
-    const nome = document.getElementById("nome").value;
-    const cidade = document.getElementById("cidade").value;
-    const conector = document.getElementById("conector").value;
-    const potencia = document.getElementById("potencia").value;
-
-    try {
-
-      await fetch(
-        `https://chargermap-backend.onrender.com/postos/${postoEditando}`,
-        {
-          method: "PUT",
-
-          headers: {
-            "Content-Type": "application/json"
-          },
-
-          body: JSON.stringify({
-            nome,
-            cidade,
-            conector,
-            potencia
-          })
-        }
-      );
-
-      postoEditando = null;
-
-      limparFormulario();
-
-      closeModal();
-
-      carregarPostos();
-
-    } catch (error) {
-
-      console.error(error);
-
-    }
-
-  }
-
-  async function salvarPosto() {
-
-    if (postoEditando) {
-
-      await atualizarPosto();
-
-    } else {
-
-      await criarPosto();
-
-    }
-
-  }
-
-  function editarPosto(
-    id,
-    nome,
-    cidade,
-    conector,
-    potencia
-  ) {
-
-    postoEditando = id;
-
-    document.getElementById("nome").value = nome;
-    document.getElementById("cidade").value = cidade;
-    document.getElementById("conector").value = conector;
-    document.getElementById("potencia").value = potencia;
-
-    openModal();
-
-  }
-
-  async function deletarPosto(id) {
-
-    const confirmar = confirm(
-      "Deseja realmente excluir este posto?"
+        body: JSON.stringify({
+          disponibilidade
+        })
+      }
     );
 
-    if (!confirmar) return;
+    carregarPostos();
 
-    try {
+  } catch(error) {
 
-      await fetch(
-        `https://chargermap-backend.onrender.com/postos/${id}`,
-        {
-          method: "DELETE"
-        }
-      );
-
-      carregarPostos();
-
-    } catch (error) {
-
-      console.error(error);
-
-    }
+    console.error(error);
 
   }
 
-  function limparFormulario() {
+}
 
-    document.getElementById("nome").value = "";
-    document.getElementById("cidade").value = "";
-    document.getElementById("conector").value = "";
-    document.getElementById("potencia").value = "";
+async function deletarPosto(id) {
+
+  const confirmar = confirm(
+    "Deseja realmente excluir este posto?"
+  );
+
+  if (!confirmar) return;
+
+  try {
+
+    await fetch(
+      `https://chargermap-backend.onrender.com/postos/${id}`,
+      {
+        method: "DELETE"
+      }
+    );
+
+    carregarPostos();
+
+  } catch (error) {
+
+    console.error(error);
 
   }
 
-  carregarPostos();
+}
+
+function editarPosto(
+  id,
+  nome,
+  cidade,
+  conector,
+  potencia
+) {
+
+  postoEditando = id;
+
+  document.getElementById("nome").value = nome;
+  document.getElementById("cidade").value = cidade;
+  document.getElementById("conector").value = conector;
+  document.getElementById("potencia").value = potencia;
+
+  openModal();
+
+}
+
+async function atualizarPosto() {
+
+  const nome = document.getElementById("nome").value;
+  const cidade = document.getElementById("cidade").value;
+  const conector = document.getElementById("conector").value;
+  const potencia = document.getElementById("potencia").value;
+
+  try {
+
+    await fetch(
+      `https://chargermap-backend.onrender.com/postos/${postoEditando}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          nome,
+          cidade,
+          conector,
+          potencia
+        })
+      }
+    );
+
+    postoEditando = null;
+
+    limparFormulario();
+    closeModal();
+    carregarPostos();
+
+  } catch(error) {
+
+    console.error(error);
+
+  }
+
+}
+
+async function salvarPosto() {
+
+  if (postoEditando) {
+
+    await atualizarPosto();
+
+  } else {
+
+    await criarPosto();
+
+  }
+
+}
+
+async function criarPosto() {
+
+  const nome = document.getElementById("nome").value;
+  const cidade = document.getElementById("cidade").value;
+  const conector = document.getElementById("conector").value;
+  const potencia = document.getElementById("potencia").value;
+
+  try {
+
+    await fetch(
+      "https://chargermap-backend.onrender.com/postos",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          nome,
+          cidade,
+          conector,
+          potencia,
+          disponibilidade: "Disponível",
+          avaliacao: 4.5,
+          endereco: "Endereço não informado",
+          latitude: 0,
+          longitude: 0,
+          imagem: ""
+        })
+      }
+    );
+
+    limparFormulario();
+    closeModal();
+    carregarPostos();
+
+  } catch(error) {
+
+    console.error(error);
+
+  }
+
+}
+
+function limparFormulario() {
+
+  document.getElementById("nome").value = "";
+  document.getElementById("cidade").value = "";
+  document.getElementById("conector").value = "";
+  document.getElementById("potencia").value = "";
+
+}
+
+carregarPostos();
+
+function logout(){
+  localStorage.removeItem("auth");
+  window.location.href =
+    "login.html";
+}
 
 </script>
 

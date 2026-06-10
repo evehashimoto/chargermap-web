@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Login - ChargerMap</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  background:#FFFF;
+  font-family:'Poppins',sans-serif;
+  min-height:100vh;
+}
+
+.container{
+  width:100%;
+  min-height:100vh;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:250px;
+}
+
+.logo img{
+  width:400px;
+}
+
+.login-box{
+  width:500px;
+  background:white;
+  border:1px solid #E5E5E5;
+  border-radius:20px;
+  padding:50px;
+}
+
+.login-box h1{
+  text-align:center;
+  color:#555799;
+  margin-bottom:40px;
+  font-family:'Hanken Grotesk',sans-serif;
+}
+
+.input-group{
+  margin-bottom:20px;
+}
+
+.input-group input{
+  width:100%;
+  height:55px;
+  border:1px solid #555799;
+  border-radius:10px;
+  padding:0 15px;
+  font-size:15px;
+  outline:none;
+}
+
+.btn-login{
+  width:100%;
+  height:55px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(
+    90deg,
+    #B947FA,
+    #A344F3
+  );
+
+  color:white;
+  font-size:18px;
+  font-weight:600;
+  cursor:pointer;
+
+  margin-top:20px;
+}
+
+.btn-login:hover{
+  opacity:0.9;
+}
+
+.erro{
+  color:red;
+  text-align:center;
+  margin-top:15px;
+}
+
+@media(max-width:900px){
+
+  .container{
+    flex-direction:column;
+    padding:30px;
+  }
+
+  .logo img{
+    width:280px;
+  }
+
+  .login-box{
+    width:100%;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="logo">
+    <img src="assets/logo.png" alt="logo">
+  </div>
+
+  <div class="login-box">
+
+    <h1>Login</h1>
+
+    <div class="input-group">
+      <input
+        type="email"
+        id="email"
+        placeholder="E-mail"
+      >
+    </div>
+
+    <div class="input-group">
+      <input
+        type="password"
+        id="senha"
+        placeholder="Senha"
+      >
+    </div>
+
+    <button
+      class="btn-login"
+      onclick="login()"
+    >
+      Entrar
+    </button>
+
+    <p id="erro" class="erro"></p>
+
+  </div>
+
+</div>
+
+<script>
+
+function login() {
+
+  const email =
+    document.getElementById("email").value;
+
+  const senha =
+    document.getElementById("senha").value;
+
+  if(
+    email === "admin@chargermap.com" &&
+    senha === "123456"
+  ){
+
+    localStorage.setItem(
+      "auth",
+      "true"
+    );
+
+    window.location.href =
+      "index.html";
+
+  } else {
+
+    document.getElementById("erro").innerText =
+      "E-mail ou senha inválidos.";
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>
