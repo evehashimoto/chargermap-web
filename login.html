@@ -1,196 +1,500 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Login - ChargerMap</title>
+  <title>Login - ChargerMap</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script>
+    try {
+      const temaSalvo = localStorage.getItem("chargermap-theme");
 
-<style>
+      if (temaSalvo === "dark" || temaSalvo === "light") {
+        document.documentElement.dataset.theme = temaSalvo;
+      }
+    } catch (error) {
+    }
+  </script>
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-body{
-  background:#FFFF;
-  font-family:'Poppins',sans-serif;
-  min-height:100vh;
-}
+    :root {
+      color-scheme: light;
 
-.container{
-  width:100%;
-  min-height:100vh;
+      --page-bg: #FFFFFF;
+      --card-bg: #FFFFFF;
+      --text-color: #292943;
+      --heading-color: #555799;
+      --border-color: #E5E5E5;
 
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:250px;
-}
+      --input-bg: #FFFFFF;
+      --input-text: #292943;
+      --input-border: #555799;
 
-.logo img{
-  width:400px;
-}
+      --button-bg: #B947FA;
+      --button-hover: #A52DE8;
+      --button-text: #FFFFFF;
 
-.login-box{
-  width:500px;
-  background:white;
-  border:1px solid #E5E5E5;
-  border-radius:20px;
-  padding:50px;
-}
+      --toggle-bg: #B947FA;
+      --toggle-text: #FFFFFF;
+      --toggle-border: #B947FA;
 
-.login-box h1{
-  text-align:center;
-  color:#555799;
-  margin-bottom:40px;
-  font-family:'Hanken Grotesk',sans-serif;
-}
+      --error-color: #B42318;
+      --focus-color: #000000;
+    }
 
-.input-group{
-  margin-bottom:20px;
-}
+    :root[data-theme="dark"] {
+      color-scheme: dark;
 
-.input-group input{
-  width:100%;
-  height:55px;
-  border:1px solid #555799;
-  border-radius:10px;
-  padding:0 15px;
-  font-size:15px;
-  outline:none;
-}
+      --page-bg: #121212;
+      --card-bg: #1C1C1C;
+      --text-color: #FFFFFF;
+      --heading-color: #E0B6FF;
+      --border-color: #514C6A;
 
-.btn-login{
-  width:100%;
-  height:55px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(
-    90deg,
-    #B947FA,
-    #A344F3
-  );
+      --input-bg: #262626;
+      --input-text: #FFFFFF;
+      --input-border: #A88DC7;
 
-  color:white;
-  font-size:18px;
-  font-weight:600;
-  cursor:pointer;
+      --button-bg: #B947FA;
+      --button-hover: #A52DE8;
+      --button-text: #FFFFFF;
 
-  margin-top:20px;
-}
+      --toggle-bg: #B947FA;
+      --toggle-text: #FFFFFF;
+      --toggle-border: #D98AFF;
 
-.btn-login:hover{
-  opacity:0.9;
-}
+      --error-color: #FFAAA5;
+      --focus-color: #E0B6FF;
+    }
 
-.erro{
-  color:red;
-  text-align:center;
-  margin-top:15px;
-}
+    html {
+      min-height: 100%;
+    }
 
-@media(max-width:900px){
+    body {
+      min-height: 100vh;
+      min-height: 100svh;
+      background: var(--page-bg);
+      color: var(--text-color);
+      font-family: "Poppins", sans-serif;
+      transition: background-color 200ms ease, color 200ms ease;
+    }
 
-  .container{
-    flex-direction:column;
-    padding:30px;
-  }
+    button,
+    input {
+      font: inherit;
+    }
 
-  .logo img{
-    width:280px;
-  }
+    button:focus-visible,
+    input:focus-visible {
+      outline: 3px solid var(--focus-color);
+      outline-offset: 3px;
+    }
 
-  .login-box{
-    width:100%;
-  }
+    /* Botão de tema: primeiro elemento interativo da página. */
+    .theme-toggle {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      z-index: 10;
 
-}
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
 
-</style>
+      min-height: 44px;
+      padding: 12px 20px;
+
+      border: 1px solid var(--toggle-border);
+      border-radius: 16px;
+
+      background: var(--toggle-bg);
+      color: var(--toggle-text);
+
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.4;
+
+      cursor: pointer;
+
+      transition:
+        background-color 200ms ease,
+        border-color 200ms ease;
+    }
+
+    .theme-toggle:hover {
+      background: var(--button-hover);
+      border-color: var(--button-hover);
+    }
+
+    .theme-toggle:focus-visible {
+      outline: 3px solid var(--focus-color);
+      outline-offset: 4px;
+    }
+
+    .container {
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100svh;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(32px, 7vw, 120px);
+
+      padding: 100px 48px 48px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      flex: 0 1 380px;
+      min-width: 0;
+    }
+
+    .logo img {
+      display: block;
+      width: 100%;
+      max-width: 380px;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .logo-negative {
+      display: none !important;
+    }
+
+    :root[data-theme="dark"] .logo-positive {
+      display: none !important;
+    }
+
+    :root[data-theme="dark"] .logo-negative {
+      display: block !important;
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 460px;
+
+      padding: clamp(28px, 4vw, 48px);
+
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+
+      box-shadow: 0 12px 40px rgba(30, 20, 60, 0.07);
+
+      transition:
+        background-color 200ms ease,
+        border-color 200ms ease;
+    }
+
+    :root[data-theme="dark"] .login-box {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .login-box h1 {
+      margin-bottom: 32px;
+
+      color: var(--heading-color);
+      text-align: center;
+
+      font-family: "Hanken Grotesk", sans-serif;
+      font-size: clamp(28px, 4vw, 34px);
+      line-height: 1.2;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+
+      color: var(--text-color);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .input-group input {
+      display: block;
+      width: 100%;
+      min-height: 55px;
+
+      padding: 12px 15px;
+
+      border: 1px solid var(--input-border);
+      border-radius: 10px;
+
+      background: var(--input-bg);
+      color: var(--input-text);
+
+      font-size: 15px;
+
+      transition:
+        background-color 200ms ease,
+        border-color 200ms ease;
+    }
+
+    .input-group input::placeholder {
+      color: #77758A;
+      opacity: 1;
+    }
+
+    :root[data-theme="dark"] .input-group input::placeholder {
+      color: #C4BED5;
+    }
+
+    .btn-login {
+      display: block;
+      width: 100%;
+      min-height: 55px;
+
+      margin-top: 20px;
+      padding: 12px 20px;
+
+      border: 1px solid var(--button-bg);
+      border-radius: 16px;
+
+      background: var(--button-bg);
+      color: var(--button-text);
+
+      font-size: 17px;
+      font-weight: 600;
+
+      cursor: pointer;
+
+      transition:
+        background-color 180ms ease,
+        border-color 180ms ease;
+    }
+
+    .btn-login:hover {
+      background: var(--button-hover);
+      border-color: var(--button-hover);
+    }
+
+    .erro {
+      margin-top: 16px;
+      color: var(--error-color);
+      text-align: center;
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .container {
+        flex-direction: column;
+        gap: 32px;
+        padding: 100px 32px 40px;
+      }
+
+      .logo {
+        flex: 0 1 auto;
+        width: 100%;
+      }
+
+      .logo img {
+        max-width: 260px;
+      }
+
+      .login-box {
+        max-width: 460px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .theme-toggle {
+        top: 16px;
+        right: 16px;
+        min-height: 44px;
+        padding: 10px 16px;
+        font-size: 13px;
+      }
+
+      .container {
+        gap: 24px;
+        padding: 84px 20px 28px;
+      }
+
+      .logo img {
+        max-width: 190px;
+      }
+
+      .login-box {
+        padding: 28px 22px;
+        border-radius: 16px;
+      }
+
+      .login-box h1 {
+        margin-bottom: 26px;
+      }
+    }
+
+    @media (max-width: 350px) {
+      .container {
+        padding-right: 14px;
+        padding-left: 14px;
+      }
+
+      .login-box {
+        padding: 24px 18px;
+      }
+
+      .theme-toggle {
+        right: 12px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
+  <!-- Primeiro elemento interativo na ordem do documento. -->
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Ativar alto contraste" aria-pressed="false">
+    <span id="theme-icon" aria-hidden="true">◐</span>
+    <span id="theme-label">Alto contraste</span>
+  </button>
 
-  <div class="logo">
-    <img src="assets/logo.png" alt="logo">
-  </div>
+  <main class="container">
 
-  <div class="login-box">
+    <div class="logo">
+      <img class="logo-positive" src="assets/logo-positive.png" alt="Logotipo ChargerMap by FLUI">
 
-    <h1>Login</h1>
-
-    <div class="input-group">
-      <input
-        type="email"
-        id="email"
-        placeholder="E-mail"
-      >
+      <img class="logo-negative" src="assets/logo-negative.png" alt="ChargerMap">
     </div>
 
-    <div class="input-group">
-      <input
-        type="password"
-        id="senha"
-        placeholder="Senha"
-      >
-    </div>
 
-    <button
-      class="btn-login"
-      onclick="login()"
-    >
-      Entrar
-    </button>
+    <section class="login-box" aria-labelledby="login-title">
 
-    <p id="erro" class="erro"></p>
+      <h1 id="login-title">Login</h1>
 
-  </div>
+      <form id="login-form">
+        <div class="input-group">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" name="email" placeholder="Digite seu e-mail" autocomplete="username" required>
+        </div>
 
-</div>
+        <div class="input-group">
+          <label for="senha">Senha</label>
+          <input type="password" id="senha" name="senha" placeholder="Digite sua senha" autocomplete="current-password"
+            required>
+        </div>
 
-<script>
+        <button class="btn-login" type="submit">
+          Entrar
+        </button>
 
-function login() {
+        <p id="erro" class="erro" role="alert" aria-atomic="true"></p>
+      </form>
 
-  const email =
-    document.getElementById("email").value;
+    </section>
 
-  const senha =
-    document.getElementById("senha").value;
+  </main>
 
-  if(
-    email === "admin@chargermap.com" &&
-    senha === "123456"
-  ){
+  <script>
+    const themeToggle = document.getElementById("theme-toggle");
+    const themeLabel = document.getElementById("theme-label");
+    const themeIcon = document.getElementById("theme-icon");
 
-    localStorage.setItem(
-      "auth",
-      "true"
-    );
+    function atualizarBotaoTema() {
+      const temaEscuro =
+        document.documentElement.dataset.theme === "dark";
 
-    window.location.href =
-      "index.html";
+      themeToggle.setAttribute(
+        "aria-pressed",
+        String(temaEscuro)
+      );
 
-  } else {
+      themeToggle.setAttribute(
+        "aria-label",
+        temaEscuro ? "Ativar modo claro" : "Ativar alto contraste"
+      );
 
-    document.getElementById("erro").innerText =
-      "E-mail ou senha inválidos.";
+      themeLabel.textContent =
+        temaEscuro ? "Modo claro" : "Alto contraste";
 
+      themeIcon.textContent = temaEscuro ? "☀" : "◐";
+    }
+
+    themeToggle.addEventListener("click", function () {
+      const temaAtual = document.documentElement.dataset.theme;
+      const novoTema = temaAtual === "dark" ? "light" : "dark";
+
+      document.documentElement.dataset.theme = novoTema;
+
+      try {
+        localStorage.setItem("chargermap-theme", novoTema);
+      } catch (error) {
+        // O tema ainda pode ser alterado nesta página.
+      }
+
+      atualizarBotaoTema();
+    });
+
+    atualizarBotaoTema();
+
+
+function login(event) {
+  if (event) {
+    event.preventDefault();
   }
 
+  const email = document.getElementById("email").value;
+  const senha = document.getElementById("senha").value;
+  const erro = document.getElementById("erro");
+
+  erro.textContent = "";
+
+  if (
+    email === "admin@chargermap.com" &&
+    senha === "123456"
+  ) {
+    try {
+      localStorage.setItem("auth", "true");
+    } catch (error) {
+      erro.textContent =
+        "Não foi possível iniciar a sessão neste navegador.";
+      return;
+    }
+
+    window.location.href = "index.html";
+  } else {
+    erro.textContent = "E-mail ou senha inválidos.";
+  }
 }
 
-</script>
+document.getElementById("login-form").addEventListener("submit", login);
+
+  </script>
 
 </body>
+
 </html>

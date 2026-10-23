@@ -1,182 +1,277 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <title>Avaliações</title>
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Avaliações - ChargerMap</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
-
   <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    try {
+      const temaSalvo = localStorage.getItem("chargermap-theme");
+
+      if (temaSalvo === "dark" || temaSalvo === "light") {
+        document.documentElement.dataset.theme = temaSalvo;
+      }
+    } catch (error) {
+    }
+  </script>
 </head>
 
-<body>
+<body class="reviews-page">
 
   <header class="navbar">
 
     <div class="logo-area">
-      <img src="assets/logo.png" alt="logo">
+      <img
+        class="logo-light"
+        src="assets/logo-positive.png"
+        alt="ChargerMap"
+      >
+
+      <img
+        class="logo-dark"
+        src="assets/logo-negative.png"
+        alt="ChargerMap"
+      >
     </div>
 
-    <nav>
+    <nav aria-label="Navegação principal">
       <a href="index.html">Painel Administrativo</a>
+      <a href="avaliacoes.html" aria-current="page">Avaliações</a>
       <a href="relatorios.html">Relatórios</a>
     </nav>
 
-    <button class="profile-btn" onclick="logout()">
-  <i data-lucide="log-out"></i>
-  Sair
-</button>
+    <div class="header-actions">
+
+      <button
+        class="theme-toggle"
+        id="theme-toggle"
+        type="button"
+        aria-label="Ativar alto contraste"
+        aria-pressed="false"
+      >
+        <i data-lucide="moon" aria-hidden="true"></i>
+        <span id="theme-label">Alto contraste</span>
+      </button>
+
+      <button
+        class="profile-btn"
+        type="button"
+        onclick="logout()"
+      >
+        <i data-lucide="log-out" aria-hidden="true"></i>
+        Sair
+      </button>
+
+    </div>
 
   </header>
 
   <main class="container">
 
-    <section class="title-section">
-      <h1>Avaliações</h1>
+    <section class="title-section" aria-labelledby="page-title">
+      <h1 id="page-title">Avaliações</h1>
       <p>Analise as avaliações dos postos.</p>
     </section>
 
-    <section class="cards">
+    <section class="cards" aria-label="Indicadores de avaliações">
 
-      <div class="card">
-        <h3>Média Geral</h3>
+      <article class="card">
+        <h2 class="card-label">Média Geral</h2>
 
         <div class="stars-line">
-          <h2>4,3</h2>
+          <p class="metric-value">4,3</p>
 
-          <div class="stars">
-            ⭐ ⭐ ⭐ ⭐
-          </div>
+          <span class="rating-stars" aria-label="4 de 5 estrelas">
+            <span aria-hidden="true">★★★★</span>
+          </span>
         </div>
 
         <p>Baseado em 2.345 avaliações</p>
-      </div>
+      </article>
 
-      <div class="card">
-        <h3>Avaliações no Mês</h3>
-        <h2>123</h2>
-        <p><strong>+ 11,6%</strong> que o mês anterior</p>
-      </div>
+      <article class="card">
+        <h2 class="card-label">Avaliações no Mês</h2>
+        <p class="metric-value">123</p>
+        <p><strong class="positive-indicator">+ 11,6%</strong> que o mês anterior</p>
+      </article>
 
-      <div class="card">
-        <h3>Posto com Melhor Avaliação</h3>
-        <h2>Nações Unidas</h2>
-        <p>4,3 ⭐</p>
-      </div>
+      <article class="card">
+        <h2 class="card-label">Posto com Melhor Avaliação</h2>
+        <p class="metric-value best-station">Nações Unidas</p>
+        <p>
+          <span aria-label="Nota 4,3 de 5">4,3 de 5</span>
+          <span aria-hidden="true">★</span>
+        </p>
+      </article>
 
     </section>
 
-    <section class="table-section">
+    <section class="reviews-section" aria-labelledby="reviews-title">
 
-      <table>
+      <div class="table-header">
+        <h2 id="reviews-title">Avaliações recentes</h2>
+      </div>
 
-        <thead>
-          <tr>
-            <th>Usuário</th>
-            <th>Posto de Recarga</th>
-            <th>Avaliação</th>
-            <th>Comentário</th>
-          </tr>
-        </thead>
+      <div class="table-section reviews-table-wrapper" role="region" aria-label="Tabela de avaliações. Em telas estreitas, deslize horizontalmente para consultar todas as colunas." tabindex="0">
 
-        <tbody>
+        <table class="reviews-table">
+          <caption class="visually-hidden">
+            Avaliações dos usuários, com posto de recarga, nota e comentário.
+          </caption>
 
-          <tr>
-            <td>
-              <strong>Robson S.</strong><br>
-              robsons@gmail.com
-            </td>
+          <thead>
+            <tr>
+              <th scope="col">Usuário</th>
+              <th scope="col">Posto de Recarga</th>
+              <th scope="col">Avaliação</th>
+              <th scope="col">Comentário</th>
+            </tr>
+          </thead>
 
-            <td>
-              <strong>Nações Unidas</strong><br>
-              Osasco, SP
-            </td>
+          <tbody>
+            <tr>
+              <td>
+                <strong>Robson S.</strong>
+                <span class="secondary-text">robsons@gmail.com</span>
+              </td>
 
-            <td>
-              ⭐ ⭐ ⭐ ⭐ 4,3
-            </td>
+              <td>
+                <strong>Nações Unidas</strong>
+                <span class="secondary-text">Osasco, SP</span>
+              </td>
 
-            <td>
-              Top. Fácil de usar.
-            </td>
-          </tr>
+              <td>
+                <span class="rating-value">4,3 de 5</span>
+                <span class="rating-stars" aria-hidden="true">★★★★</span>
+              </td>
 
-          <tr>
-            <td>
-              <strong>Robson S.</strong><br>
-              robsons@gmail.com
-            </td>
+              <td>Top. Fácil de usar.</td>
+            </tr>
 
-            <td>
-              <strong>Nações Unidas</strong><br>
-              Osasco, SP
-            </td>
+            <tr>
+              <td>
+                <strong>Robson S.</strong>
+                <span class="secondary-text">robsons@gmail.com</span>
+              </td>
 
-            <td>
-              ⭐ ⭐ ⭐ ⭐ 4,3
-            </td>
+              <td>
+                <strong>Nações Unidas</strong>
+                <span class="secondary-text">Osasco, SP</span>
+              </td>
 
-            <td>
-              Top. Fácil de usar.
-            </td>
-          </tr>
+              <td>
+                <span class="rating-value">4,3 de 5</span>
+                <span class="rating-stars" aria-hidden="true">★★★★</span>
+              </td>
 
-          <tr>
-            <td>
-              <strong>Robson S.</strong><br>
-              robsons@gmail.com
-            </td>
+              <td>Top. Fácil de usar.</td>
+            </tr>
 
-            <td>
-              <strong>Nações Unidas</strong><br>
-              Osasco, SP
-            </td>
+            <tr>
+              <td>
+                <strong>Robson S.</strong>
+                <span class="secondary-text">robsons@gmail.com</span>
+              </td>
 
-            <td>
-              ⭐ ⭐ ⭐ ⭐ 4,3
-            </td>
+              <td>
+                <strong>Nações Unidas</strong>
+                <span class="secondary-text">Osasco, SP</span>
+              </td>
 
-            <td>
-              Top. Fácil de usar.
-            </td>
-          </tr>
+              <td>
+                <span class="rating-value">4,3 de 5</span>
+                <span class="rating-stars" aria-hidden="true">★★★★</span>
+              </td>
 
-          <tr>
-            <td>
-              <strong>Robson S.</strong><br>
-              robsons@gmail.com
-            </td>
+              <td>Top. Fácil de usar.</td>
+            </tr>
 
-            <td>
-              <strong>Nações Unidas</strong><br>
-              Osasco, SP
-            </td>
+            <tr>
+              <td>
+                <strong>Robson S.</strong>
+                <span class="secondary-text">robsons@gmail.com</span>
+              </td>
 
-            <td>
-              ⭐ ⭐ ⭐ ⭐ 4,3
-            </td>
+              <td>
+                <strong>Nações Unidas</strong>
+                <span class="secondary-text">Osasco, SP</span>
+              </td>
 
-            <td>
-              Top. Fácil de usar.
-            </td>
-          </tr>
+              <td>
+                <span class="rating-value">4,3 de 5</span>
+                <span class="rating-stars" aria-hidden="true">★★★★</span>
+              </td>
 
-        </tbody>
+              <td>Top. Fácil de usar.</td>
+            </tr>
+          </tbody>
+        </table>
 
-      </table>
-
+      </div>
     </section>
 
   </main>
 
   <script>
+    const themeToggle = document.getElementById("theme-toggle");
+    const themeLabel = document.getElementById("theme-label");
+
+    function atualizarBotaoTema() {
+      const temaEscuro =
+        document.documentElement.dataset.theme === "dark";
+
+      themeToggle.setAttribute(
+        "aria-pressed",
+        String(temaEscuro)
+      );
+
+      themeToggle.setAttribute(
+        "aria-label",
+        temaEscuro ? "Ativar modo claro" : "Ativar alto contraste"
+      );
+
+      themeLabel.textContent =
+        temaEscuro ? "Modo claro" : "Alto contraste";
+
+      const icone = themeToggle.querySelector("i");
+
+      if (icone) {
+        icone.setAttribute(
+          "data-lucide",
+          temaEscuro ? "sun" : "moon"
+        );
+
+        lucide.createIcons();
+      }
+    }
+
+    themeToggle.addEventListener("click", function () {
+      const temaAtual = document.documentElement.dataset.theme;
+      const novoTema = temaAtual === "dark" ? "light" : "dark";
+
+      document.documentElement.dataset.theme = novoTema;
+
+      try {
+        localStorage.setItem("chargermap-theme", novoTema);
+      } catch (error) {
+        // A alternância continua funcionando nesta página.
+      }
+
+      atualizarBotaoTema();
+    });
+
+    atualizarBotaoTema();
+
     lucide.createIcons();
   </script>
 

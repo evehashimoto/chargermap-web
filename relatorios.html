@@ -1,208 +1,473 @@
 <!DOCTYPE html>
-
-<html lang="pt-br">
+<html lang="pt-BR" data-theme="light">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Relatórios - ChargerMap</title>
+  <title>Relatórios - ChargerMap</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 
-<link rel="stylesheet" href="style.css">
+  <script>
+    try {
+      const savedTheme = localStorage.getItem("chargermap-theme");
+      document.documentElement.dataset.theme =
+        savedTheme === "dark" ? "dark" : "light";
+    } catch (error) {
+      document.documentElement.dataset.theme = "light";
+    }
+  </script>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script src="https://unpkg.com/lucide@latest"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body>
+<body class="reports-page">
 
-<header class="navbar">
+  <header class="navbar">
+    <div class="logo-area">
+      <img src="assets/logo-positive.png" alt="ChargerMap" class="logo-light">
+      <img src="assets/logo-negative.png" alt="ChargerMap" class="logo-dark">
+    </div>
 
-<div class="logo-area">
-<img src="assets/logo.png" alt="logo">
-</div>
 
-<nav>
-<a href="index.html">Painel Administrativo</a>
-<a href="relatorios.html">Relatórios</a>
-</nav>
+    <nav aria-label="Navegação principal">
+      <a href="index.html">Painel Administrativo</a>
+      <a href="avaliacoes.html">Avaliações</a>
+      <a href="relatorios.html" aria-current="page">Relatórios</a>
+    </nav>
 
-<button class="profile-btn" onclick="logout()">
-  <i data-lucide="log-out"></i>
-  Sair
-</button>
 
-</header>
+    <div class="header-actions">
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Ativar modo escuro" aria-pressed="false">
+        <i data-lucide="moon" aria-hidden="true"></i>
+        <span>Modo escuro</span>
+      </button>
 
-<main class="container">
+      <button type="button" class="profile-btn" onclick="logout()">
+        <i data-lucide="log-out" aria-hidden="true"></i>
+        Sair
+      </button>
+    </div>
+  </header>
 
-<section class="title-section">
-<h1>Relatórios</h1>
-<p>Indicadores de desempenho da rede ChargerMap.</p>
-</section>
+  <main class="container reports-container">
+    <section class="title-section" aria-labelledby="reportsTitle">
+      <h1 id="reportsTitle">Relatórios</h1>
+      <p>Indicadores de desempenho da rede ChargerMap.</p>
+    </section>
 
-<section class="cards">
+    <section class="cards report-cards" aria-label="Resumo dos indicadores">
+      <article class="card">
+        <h2 class="card-label">Total de postos</h2>
+        <p class="metric-value" id="totalPostos" aria-live="polite">—</p>
+        <p>Postos cadastrados</p>
+      </article>
 
-<div class="card">
-<h3>Total de Postos</h3>
-<h2 id="totalPostos">0</h2>
-<p>Postos cadastrados</p>
-</div>
+      <article class="card">
+        <h2 class="card-label">Média de avaliação</h2>
+        <p class="metric-value" id="mediaAvaliacoes" aria-live="polite">—</p>
+        <p>Satisfação dos usuários</p>
+      </article>
 
-<div class="card">
-<h3>Média de Avaliação</h3>
-<h2 id="mediaAvaliacoes">0</h2>
-<p>Satisfação dos usuários</p>
-</div>
+      <article class="card">
+        <h2 class="card-label">Disponibilidade</h2>
+        <p class="metric-value" id="postosDisponiveis" aria-live="polite">—</p>
+        <p>Postos disponíveis</p>
+      </article>
+    </section>
 
-<div class="card">
-<h3>Disponibilidade</h3>
-<h2 id="postosDisponiveis">0</h2>
-<p>Postos disponíveis</p>
-</div>
+    <p id="reportsStatus" class="reports-status" role="status" aria-live="polite">
+      Carregando indicadores...
+    </p>
 
-</section>
+    <section class="graficos-container" aria-label="Gráficos dos relatórios">
+      <article class="table-section grafico-card">
+        <h2>Disponibilidade dos postos</h2>
+        <p class="chart-description">
+          Quantidade de postos por situação de disponibilidade.
+        </p>
 
-<div class="graficos-container">
+        <div class="chart-canvas-wrapper">
+          <canvas id="graficoDisponibilidade" role="img"
+            aria-label="Gráfico de rosca que apresenta a quantidade de postos disponíveis, em uso e indisponíveis.">
+            Gráfico de disponibilidade dos postos.
+          </canvas>
+        </div>
 
-  <section class="table-section grafico-card">
+        <ul id="resumoDisponibilidade" class="chart-summary" aria-label="Dados de disponibilidade">
+          <li>Aguardando dados do relatório.</li>
+        </ul>
+      </article>
 
-    <h2 style="margin-bottom:20px;color:#555799;">
-      Disponibilidade dos Postos
-    </h2>
+      <article class="table-section grafico-card">
+        <h2>Avaliações dos postos</h2>
+        <p class="chart-description">
+          Nota registrada para cada posto de recarga.
+        </p>
 
-    <canvas id="graficoDisponibilidade"></canvas>
+        <div class="chart-canvas-wrapper">
+          <canvas id="graficoAvaliacoes" role="img"
+            aria-label="Gráfico de barras com a avaliação de cada posto de recarga.">
+            Gráfico de avaliações dos postos.
+          </canvas>
+        </div>
 
-  </section>
+        <div class="chart-table-wrapper">
+          <table class="chart-data-table">
+            <caption>Dados do gráfico de avaliações dos postos</caption>
+            <thead>
+              <tr>
+                <th scope="col">Posto</th>
+                <th scope="col">Avaliação</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaDadosAvaliacoes">
+              <tr>
+                <td colspan="2">Aguardando dados do relatório.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+  </main>
 
-  <section class="table-section grafico-card">
+  <script>
+    const themeToggle = document.getElementById("themeToggle");
+    const reportsStatus = document.getElementById("reportsStatus");
 
-    <h2 style="margin-bottom:20px;color:#555799;">
-      Avaliações dos Postos
-    </h2>
+    let graficoDisponibilidade = null;
+    let graficoAvaliacoes = null;
 
-    <canvas id="graficoAvaliacoes"></canvas>
+    const chartColors = {
+      available: "#1E9E62",
+      inUse: "#B947FA",
+      unavailable: "#555799",
+      primary: "#B947FA",
+      secondary: "#555799"
+    };
 
-  </section>
+    function isDarkTheme() {
+      return document.documentElement.dataset.theme === "dark";
+    }
 
-</div>
+    function getChartTextColor() {
+      return isDarkTheme() ? "#FFFFFF" : "#1C1C1C";
+    }
 
-</main>
+    function getChartGridColor() {
+      return isDarkTheme() ? "#555555" : "#DCDCE8";
+    }
 
-<script>
+    function atualizarBotaoTema() {
+      const dark = isDarkTheme();
 
-lucide.createIcons();
+      themeToggle.setAttribute("aria-pressed", String(dark));
+      themeToggle.setAttribute(
+        "aria-label",
+        dark ? "Ativar modo claro" : "Ativar modo escuro"
+      );
 
-async function carregarRelatorios() {
+      themeToggle.innerHTML = dark
+        ? '<i data-lucide="sun" aria-hidden="true"></i><span>Modo claro</span>'
+        : '<i data-lucide="moon" aria-hidden="true"></i><span>Modo escuro</span>';
 
-try {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
 
-const response = await fetch(
-"https://chargermap-backend.onrender.com/postos"
-);
+    function aplicarTemaNosGraficos() {
+      const textColor = getChartTextColor();
+      const gridColor = getChartGridColor();
 
-const postos = await response.json();
+      [graficoDisponibilidade, graficoAvaliacoes].forEach((grafico) => {
+        if (!grafico) return;
 
-document.getElementById("totalPostos").innerText =
-postos.length;
+        grafico.options.plugins.legend.labels.color = textColor;
 
-let somaAvaliacoes = 0;
+        if (grafico.options.scales?.x) {
+          grafico.options.scales.x.ticks.color = textColor;
+          grafico.options.scales.x.grid.color = gridColor;
+        }
 
-let disponiveis = 0;
-let emUso = 0;
-let indisponiveis = 0;
+        if (grafico.options.scales?.y) {
+          grafico.options.scales.y.ticks.color = textColor;
+          grafico.options.scales.y.grid.color = gridColor;
+        }
 
-const nomes = [];
-const avaliacoes = [];
+        grafico.update();
+      });
+    }
 
-postos.forEach((posto) => {
+    themeToggle.addEventListener("click", () => {
+      const nextTheme = isDarkTheme() ? "light" : "dark";
 
-somaAvaliacoes += posto.avaliacao || 0;
+      document.documentElement.dataset.theme = nextTheme;
 
-nomes.push(posto.nome);
-avaliacoes.push(posto.avaliacao || 0);
+      try {
+        localStorage.setItem("chargermap-theme", nextTheme);
+      } catch (error) {
+        console.warn("Não foi possível salvar a preferência de tema.", error);
+      }
 
-if (posto.disponibilidade === "Disponível") {
-disponiveis++;
-}
+      atualizarBotaoTema();
+      aplicarTemaNosGraficos();
+    });
 
-if (posto.disponibilidade === "Em uso") {
-emUso++;
-}
+    function criarGraficoDisponibilidade(disponiveis, emUso, indisponiveis) {
+      if (graficoDisponibilidade) {
+        graficoDisponibilidade.destroy();
+      }
 
-if (posto.disponibilidade === "Indisponível") {
-indisponiveis++;
-}
+      graficoDisponibilidade = new Chart(
+        document.getElementById("graficoDisponibilidade"),
+        {
+          type: "doughnut",
+          data: {
+            labels: ["Disponíveis", "Em uso", "Indisponíveis"],
+            datasets: [{
+              data: [disponiveis, emUso, indisponiveis],
+              backgroundColor: [
+                chartColors.available,
+                chartColors.inUse,
+                chartColors.unavailable
+              ],
+              borderColor: isDarkTheme() ? "#1C1C1C" : "#FFFFFF",
+              borderWidth: 3,
+              hoverOffset: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "62%",
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: {
+                  color: getChartTextColor(),
+                  padding: 20,
+                  usePointStyle: true,
+                  pointStyle: "circle"
+                }
+              }
+            }
+          }
+        }
+      );
+    }
 
-});
+    function criarGraficoAvaliacoes(nomes, avaliacoes) {
+      if (graficoAvaliacoes) {
+        graficoAvaliacoes.destroy();
+      }
 
-const media =
-(somaAvaliacoes / postos.length).toFixed(1);
+      graficoAvaliacoes = new Chart(
+        document.getElementById("graficoAvaliacoes"),
+        {
+          type: "bar",
+          data: {
+            labels: nomes,
+            datasets: [{
+              label: "Avaliação",
+              data: avaliacoes,
+              backgroundColor: chartColors.primary,
+              hoverBackgroundColor: "#A52DE8",
+              borderRadius: 8,
+              maxBarThickness: 42
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                ticks: {
+                  color: getChartTextColor(),
+                  maxRotation: 45,
+                  minRotation: 0
+                },
+                grid: {
+                  display: false,
+                  color: getChartGridColor()
+                }
+              },
+              y: {
+                beginAtZero: true,
+                min: 0,
+                max: 5,
+                ticks: {
+                  color: getChartTextColor(),
+                  stepSize: 1
+                },
+                grid: {
+                  color: getChartGridColor()
+                },
+                title: {
+                  display: true,
+                  text: "Nota (de 0 a 5)",
+                  color: getChartTextColor()
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                callbacks: {
+                  label: (context) => `Avaliação: ${context.raw} de 5`
+                }
+              }
+            }
+          }
+        }
+      );
+    }
 
-document.getElementById("mediaAvaliacoes").innerText =
-media + " ⭐";
+    function atualizarResumoDisponibilidade(disponiveis, emUso, indisponiveis) {
+      const lista = document.getElementById("resumoDisponibilidade");
 
-document.getElementById("postosDisponiveis").innerText =
-disponiveis;
+      lista.replaceChildren();
 
-new Chart(
-document.getElementById("graficoDisponibilidade"),
-{
-type: "doughnut",
+      [
+        `Disponíveis: ${disponiveis}`,
+        `Em uso: ${emUso}`,
+        `Indisponíveis: ${indisponiveis}`
+      ].forEach((texto) => {
+        const item = document.createElement("li");
+        item.textContent = texto;
+        lista.appendChild(item);
+      });
+    }
 
-data: {
-labels: [
-"Disponíveis",
-"Em Uso",
-"Indisponíveis"
-],
+    function atualizarTabelaAvaliacoes(nomes, avaliacoes) {
+      const tbody = document.getElementById("tabelaDadosAvaliacoes");
+      tbody.replaceChildren();
 
-datasets: [{
-data: [
-disponiveis,
-emUso,
-indisponiveis
-]
-}]
-}
-}
-);
+      if (nomes.length === 0) {
+        const linha = document.createElement("tr");
+        const celula = document.createElement("td");
+        celula.colSpan = 2;
+        celula.textContent = "Não há avaliações para exibir.";
+        linha.appendChild(celula);
+        tbody.appendChild(linha);
+        return;
+      }
 
-new Chart(
-document.getElementById("graficoAvaliacoes"),
-{
-type: "bar",
+      nomes.forEach((nome, index) => {
+        const linha = document.createElement("tr");
+        const celulaNome = document.createElement("td");
+        const celulaAvaliacao = document.createElement("td");
 
-data: {
-labels: nomes,
+        celulaAvaliacao.textContent =
+          avaliacoes[index] === null
+            ? "Sem avaliação"
+            : `${avaliacoes[index]} de 5`;
 
-datasets: [{
-label: "Avaliação",
+        linha.append(celulaNome, celulaAvaliacao);
+        tbody.appendChild(linha);
+      });
+    }
 
-data: avaliacoes
-}]
-}
-}
-);
+    async function carregarRelatorios() {
+      reportsStatus.textContent = "Carregando indicadores...";
 
-} catch(error) {
+      try {
+        const response = await fetch(
+          "https://chargermap-backend.onrender.com/postos"
+        );
 
-console.error(error);
+        if (!response.ok) {
+          throw new Error(`Erro ao carregar postos: HTTP ${response.status}`);
+        }
 
-}
+        const postos = await response.json();
 
-}
+        if (!Array.isArray(postos)) {
+          throw new Error("O formato dos dados recebidos não é o esperado.");
+        }
 
-carregarRelatorios();
+        document.getElementById("totalPostos").textContent = postos.length;
 
-</script>
+        let somaAvaliacoes = 0;
+        let quantidadeAvaliacoes = 0;
+        let disponiveis = 0;
+        let emUso = 0;
+        let indisponiveis = 0;
+
+        const nomes = [];
+        const avaliacoes = [];
+
+        postos.forEach((posto) => {
+          const avaliacao = Number(posto.avaliacao);
+          const notaValida =
+            posto.avaliacao !== null &&
+            posto.avaliacao !== undefined &&
+            posto.avaliacao !== "" &&
+            Number.isFinite(avaliacao);
+
+          if (notaValida) {
+            somaAvaliacoes += avaliacao;
+            quantidadeAvaliacoes++;
+          }
+
+          nomes.push(posto.nome || "Posto sem nome");
+          avaliacoes.push(notaValida ? avaliacao : null);
+
+          if (posto.disponibilidade === "Disponível") {
+            disponiveis++;
+          } else if (posto.disponibilidade === "Em uso") {
+            emUso++;
+          } else if (posto.disponibilidade === "Indisponível") {
+            indisponiveis++;
+          }
+        });
+
+        const media = quantidadeAvaliacoes > 0
+          ? (somaAvaliacoes / quantidadeAvaliacoes).toFixed(1)
+          : "—";
+
+        document.getElementById("mediaAvaliacoes").textContent =
+          media === "—" ? media : `${media} ⭐`;
+
+        document.getElementById("postosDisponiveis").textContent =
+          disponiveis;
+
+        criarGraficoDisponibilidade(disponiveis, emUso, indisponiveis);
+        criarGraficoAvaliacoes(nomes, avaliacoes);
+
+        atualizarResumoDisponibilidade(disponiveis, emUso, indisponiveis);
+        atualizarTabelaAvaliacoes(nomes, avaliacoes);
+        aplicarTemaNosGraficos();
+
+        reportsStatus.textContent = postos.length > 0
+          ? "Indicadores atualizados."
+          : "Nenhum posto cadastrado para exibir nos relatórios.";
+      } catch (error) {
+        console.error("Erro ao carregar relatórios:", error);
+        reportsStatus.textContent =
+          "Não foi possível carregar os relatórios. Tente novamente mais tarde.";
+      }
+    }
+
+    atualizarBotaoTema();
+    carregarRelatorios();
+
+    function logout() {
+      window.location.href = "login.html";
+    }
+  </script>
 
 </body>
+
 </html>
